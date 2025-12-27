@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Amazon Product Extractor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 16px;
+      max-width: 800px;
+      margin: auto;
+    }
+    textarea {
+      width: 100%;
+      height: 90px;
+      font-size: 14px;
+    }
+    button {
+      padding: 10px 16px;
+      margin-top: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    pre {
+      background: #111;
+      color: #0f0;
+      padding: 12px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Amazon Product Data Extractor</h2>
+
+<textarea id="url" placeholder="Paste Amazon product link here"></textarea>
+<br>
+<button onclick="fetchData()">Fetch Product Data</button>
+<button onclick="copyData()">Copy</button>
+
+<pre id="output">Output will appear here...</pre>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbyWW9RRWvnMM2_siEv-PcIcY8K-ZmnRhgtyb4VV-0V5mT-zM1iZjdCRZeuO-4rvJiSj/exec";
+
+function fetchData() {
+  const url = document.getElementById("url").value.trim();
+  if (!url) {
+    alert("Paste an Amazon URL");
+    return;
+  }
+
+  document.getElementById("output").textContent = "Fetching...";
+
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({ url }),
+    headers: { "Content-Type": "application/json" }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      document.getElementById("output").textContent = data.result;
+    } else {
+      document.getElementById("output").textContent = "ERROR: " + data.error;
+    }
+  })
+  .catch(err => {
+    document.getElementById("output").textContent = err.toString();
+  });
+}
+
+function copyData() {
+  const text = document.getElementById("output").textContent;
+  navigator.clipboard.writeText(text);
+  alert("Copied to clipboard");
+}
+</script>
+
+</body>
+</html>
